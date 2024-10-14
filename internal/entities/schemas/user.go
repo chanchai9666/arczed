@@ -32,14 +32,22 @@ type LoginReq struct {
 }
 
 type UserResp struct {
-	UserId  string `json:"user_id"`  //ผู้ใช้งาน
-	Name    string `json:"name"`     //ชื่อ
-	SurName string `json:"sur_name"` //นามสกุล
-	Email   string `json:"email"`    //อีเมล
-	Level   string `json:"level"`    //เลเวล
+	UserId  string   `json:"user_id"`  //ผู้ใช้งาน
+	Name    string   `json:"name"`     //ชื่อ
+	SurName string   `json:"sur_name"` //นามสกุล
+	Email   string   `json:"email"`    //อีเมล
+	Level   []string `json:"level"`    //เลเวล
 }
 
 type LoginResp struct {
 	AccessToken string   `json:"access_token"` //Token เข้าใช้งาน
 	User        UserResp `json:"user"`         //ข้อมูลผู้ใช้
+}
+
+type JwtReq struct {
+	UserId  string `json:"user_id"`  //ผู้ใช้งาน
+	Name    string `json:"name"`     //ชื่อ
+	SurName string `json:"sur_name"` //นามสกุล
+	Email   string `json:"email"`    //อีเมล
+	Level   string `json:"level"`    //เลเวล
 }

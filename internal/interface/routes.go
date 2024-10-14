@@ -23,6 +23,7 @@ import (
 	"arczed/internal/handlers"
 	"arczed/internal/repositories"
 	"arczed/internal/usecase"
+	"arczed/pkg/middleware"
 )
 
 // @title User API
@@ -46,7 +47,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	}))
 
 	db := s.db.MainConnect()
-	db.AutoMigrate(&models.Users{}, &models.ConfigConstant{})
+	db.AutoMigrate(&models.Users{}, &models.UsersLevels{}, &models.ConfigConstant{})
 
 	// กำหนดรายละเอียดของส่วน auth Bearer
 	// @securityDefinitions.apikey ApiKeyAuth
@@ -73,9 +74,16 @@ func (s *Server) RegisterRoutes() http.Handler {
 	userService := usecase.NewUserService(userRep)
 	userEndPoint := handlers.NewUserEndPoint(userService)
 
+	constRepo := repositories.NewConstRepository(db, &s.config, "admin")
+	constService := usecase.NewConstRepository(constRepo)
+	constEndPoint := handlers.NewConstEndpoint(constService)
+
+	_ = constEndPoint
 	api := r.Group("/api")
+	api.POST("/login", userEndPoint.Login)
 	{
 		us := api.Group("/users")
+		us.Use(middleware.AuthMiddleware(s.config.JwtSECRETKEY))
 		{
 			us.GET("/", userEndPoint.FindUser)
 			us.GET("/:user_id", userEndPoint.FindUsersByUserId)
@@ -83,8 +91,16 @@ func (s *Server) RegisterRoutes() http.Handler {
 			us.POST("/createUsers", userEndPoint.CreateUsers)
 			us.POST("/updateUsers", userEndPoint.UpdateUsers)
 			us.DELETE("/deleteUsers/:user_id", userEndPoint.DeleteUsers)
-			us.POST("/login", userEndPoint.Login)
 		}
+
+		ct := api.Group("/const")
+		ct.Use(middleware.AuthMiddleware(s.config.JwtSECRETKEY))
+		{
+			ct.POST("/createConst", constEndPoint.CreateConst)
+			ct.POST("/updateConst", constEndPoint.UpdateConst)
+			ct.DELETE("/deleteConst/:group_id/:const_id", constEndPoint.DeleteConst)
+		}
+
 	}
 
 	r.GET("/health", s.healthHandler)

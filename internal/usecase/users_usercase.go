@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/chanchai9666/aider"
 	"github.com/jinzhu/copier"
@@ -71,27 +72,56 @@ func (s *userRequest) DeleteUsers(req *schemas.AddUsers) error {
 }
 
 func (s *userRequest) Login(req *schemas.LoginReq) (*schemas.LoginResp, error) {
+	// ดึงข้อมูลผู้ใช้ตาม UserID
 	result, err := s.FindUsersByUserId(&schemas.FindUsersByUserIdReq{UserId: req.UserId})
 	if err != nil {
 		return nil, err
 	}
 
-	var userLogin schemas.LoginResp
-	if result.UserId != "" && result.Password != "" {
-		if aider.CheckPassword(req.Password, result.Password) {
-			aider.DDD(result)
-			var userData schemas.UserResp
-			if err := copier.Copy(&userData, result); err != nil {
-				return nil, err
-			}
-			userLogin.User = userData
-
-			s.repo.NewJwt()
-			//สร้าง Jwt
-
-		} else {
-			return nil, aider.NewError(aider.ErrInternal, "ไม่สามารถเข้าสู่ระบบได้")
-		}
+	// ตรวจสอบการเข้าสู่ระบบ
+	if result.UserId == "" || result.Password == "" {
+		return nil, aider.NewError(aider.ErrInternal, "ข้อมูลไม่ครบถ้วน")
 	}
-	return &userLogin, err
+
+	// ตรวจสอบรหัสผ่าน
+	if !aider.CheckPassword(req.Password, result.Password) {
+		return nil, aider.NewError(aider.ErrInternal, "รหัสผ่านไม่ถูกต้อง")
+	}
+
+	// คัดลอกข้อมูลผู้ใช้
+	var userLogin schemas.LoginResp
+	var userData schemas.UserResp
+	if err := copier.Copy(&userData, result); err != nil {
+		return nil, err
+	}
+
+	levelVal := []string{}
+	for _, v := range result.Level {
+		levelVal = append(levelVal, v.Level)
+	}
+	strLvl := strings.Join(levelVal, ",")
+	userLogin.User = userData
+	userLogin.User.Level = levelVal
+
+	// ตรวจสอบและตั้งค่า Email
+	email := ""
+	if result.Email != nil {
+		email = *result.Email
+	}
+
+	// สร้าง JWT
+	token, err := s.repo.NewJwt(&schemas.JwtReq{
+		UserId:  result.UserId,
+		Name:    result.Name,
+		SurName: result.SurName,
+		Email:   email,
+		Level:   strLvl,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	userLogin.AccessToken = token
+
+	return &userLogin, nil
 }

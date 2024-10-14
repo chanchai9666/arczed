@@ -3,31 +3,14 @@ package repositories
 import (
 	"fmt"
 
-	"github.com/chanchai9666/aider"
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
-	"arczed/configs"
 	"arczed/internal/entities/models"
 	"arczed/internal/entities/schemas"
 	"arczed/pkg/safety"
 )
 
-type UsersRepository interface {
-	CreateUsers(req *schemas.AddUsers) error                     //เพิ่มข้อมูล Users
-	FindUsers(req *schemas.FindUsersReq) ([]models.Users, error) //ค้นหาข้อมูล Users
-	UpdateUser(req *schemas.AddUsers) error                      //อัพเดตข้อมูล Users
-	DeletedUser(userID *string) error                            //ลบข้อมูล Users
-	NewJwt() (string, error)
-}
-
-func NewUsersRepository(db *gorm.DB, config *configs.Config, userId string) UsersRepository {
-	return &userDB{
-		baseRequest: &baseRequest{db: db}, // ใช้ชื่อฟิลด์เพื่อกำหนดค่า
-		userId:      userId,               // กำหนดค่าให้กับ Name
-		config:      config,
-	}
-}
 func (r *userDB) CreateUsers(req *schemas.AddUsers) error {
 	var user models.Users
 	if err := copier.Copy(&user, req); err != nil {
@@ -57,7 +40,7 @@ func (r *userDB) FindUsers(req *schemas.FindUsersReq) ([]models.Users, error) {
 		tx = tx.Where("user_id=?", req.UserId)
 	}
 
-	err := tx.Scopes(WhereIsActive()).Find(&allusers).Error
+	err := tx.Preload("Level").Scopes(WhereIsActive()).Find(&allusers).Error
 	if err != nil {
 		return nil, err
 	}
@@ -90,13 +73,17 @@ func (r *userDB) DeletedUser(userID *string) error {
 	})
 }
 
-func (r *userDB) NewJwt() (string, error) {
-	rr, err := safety.GenerateJWT(r.config.JwtSECRETKEY, &safety.JwtConst{})
+func (r *userDB) NewJwt(req *schemas.JwtReq) (string, error) {
+	jwt, err := safety.GenerateJWT(r.config.JwtSECRETKEY, &safety.JwtConst{
+		UserId:   req.UserId,
+		Name:     req.Name,
+		SurName:  req.SurName,
+		Email:    req.Email,
+		Level:    req.Level,
+		SafetyId: "xxxxxxx",
+	})
 	if err != nil {
 		return "nil", err
 	}
-
-	aider.DD(rr)
-
-	return "", nil
+	return jwt, nil
 }

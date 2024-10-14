@@ -15,6 +15,8 @@ type baseRequest struct {
 
 type beseDB struct {
 	*baseRequest
+	userId string
+	config *configs.Config
 }
 
 // กำหนดให้ใหม่ให้ repo ของ user ใหม่เนื่องจากมีการรับค่า string ที่จำเป็นต้องใช้งาน
@@ -55,6 +57,19 @@ func Delete[T any](database *gorm.DB, data *T) error {
 }
 func UpdateInterface[T any](database *gorm.DB, model *T, data map[string]interface{}) error {
 	return database.Model(model).Updates(data).Error
+}
+func Find[T any](database *gorm.DB, data *T) error {
+	if err := database.Find(data).Error; err != nil {
+		return err
+	}
+	return nil
+}
+func Count[T any](database *gorm.DB, data *T) int64 {
+	var count int64
+	if err := database.Model(data).Count(&count).Error; err != nil {
+		return 0
+	}
+	return count
 }
 
 // สำหรับ Transaction

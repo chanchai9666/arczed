@@ -1,4 +1,4 @@
-# Project ArcZed
+# Project ArcZed.
 
 One Paragraph of project description goes here
 

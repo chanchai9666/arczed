@@ -192,7 +192,6 @@ func parseInputData(c *gin.Context, input interface{}) error {
 			field.SetString(param.Value) // ตั้งค่าฟิลด์จาก path parameter
 		}
 	}
-
 	return nil
 }
 

@@ -1,6 +1,7 @@
 package safety
 
 import (
+	"errors"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -52,4 +53,27 @@ func GenerateJWT(jwtSecret string, req *JwtConst) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+// VerifyJWT ตรวจสอบความถูกต้องของ JWT
+func VerifyJWT(jwtSecret string, tokenString string) (*Claims, error) {
+	// Parse token
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		// ตรวจสอบว่าอัลกอริธึมที่ใช้ในการเซ็นคือ HS256 หรือไม่
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
+		return []byte(jwtSecret), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	// ตรวจสอบว่า token ถูกยืนยันและไม่หมดอายุ
+	if claims, ok := token.Claims.(*Claims); ok && token.Valid {
+		return claims, nil
+	}
+
+	return nil, errors.New("invalid token")
 }

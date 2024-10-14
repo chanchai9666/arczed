@@ -106,7 +106,7 @@ func (en *userEndPoint) DeleteUsers(c *gin.Context) {
 	rander.RespSuccess(c, en.service.DeleteUsers, &schemas.AddUsers{})
 }
 
-// @Tags Users
+// @Tags Auth
 // @Summary Login เข้าใช้งาน
 // @Description Login เข้าใช้งานสำหรับขอ token
 // @Accept  json
@@ -115,7 +115,7 @@ func (en *userEndPoint) DeleteUsers(c *gin.Context) {
 // @Param request body schemas.LoginReq false " request body "
 // @Success 200 {object} schemas.LoginResp
 // @Failure 400 {object} schemas.HTTPError
-// @Router /api/users/login [post]
+// @Router /api/login [post]
 // @Security ApiKeyAuth
 func (en *userEndPoint) Login(c *gin.Context) {
 	rander.RespJson(c, en.service.Login, &schemas.LoginReq{})
