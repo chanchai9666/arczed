@@ -575,10 +575,6 @@ const docTemplate = `{
         "arczed_internal_entities_models.Users": {
             "type": "object",
             "properties": {
-                "birth_day": {
-                    "description": "วันเกิด",
-                    "type": "string"
-                },
                 "created_at": {
                     "description": "วันที่สร้าง",
                     "type": "string"
@@ -644,7 +640,7 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "ไอดี ของผู้ใช้งาน",
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         },
@@ -691,17 +687,16 @@ const docTemplate = `{
                 },
                 "userID": {
                     "description": "ต้องกำหนดประเภทและขนาดให้ตรงกับ Users.UserId",
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         },
         "arczed_internal_entities_schemas.AddUsers": {
             "type": "object",
+            "required": [
+                "email"
+            ],
             "properties": {
-                "birth_day": {
-                    "description": "วันเกิด",
-                    "type": "string"
-                },
                 "email": {
                     "description": "อีเมล",
                     "type": "string"
@@ -728,7 +723,7 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "ผู้ใช้งาน",
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         },
@@ -782,13 +777,17 @@ const docTemplate = `{
         },
         "arczed_internal_entities_schemas.LoginReq": {
             "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
             "properties": {
-                "password": {
-                    "description": "รหัสผ่าน",
+                "email": {
+                    "description": "ผู้ใช้งาน",
                     "type": "string"
                 },
-                "user_id": {
-                    "description": "ผู้ใช้งาน",
+                "password": {
+                    "description": "รหัสผ่าน",
                     "type": "string"
                 }
             }

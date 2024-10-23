@@ -1,14 +1,13 @@
 package schemas
 
 type AddUsers struct {
-	UserId      string `json:"user_id"`      //ผู้ใช้งาน
-	Password    string `json:"password"`     //รหัสผ่าน
-	Name        string `json:"name"`         //ชื่อ
-	SurName     string `json:"sur_name"`     //นามสกุล
-	Email       string `json:"email"`        //อีเมล
-	BirthDay    string `json:"birth_day"`    //วันเกิด
-	PhoneNumber string `json:"phone_number"` //เบอร์โทร
-	IdCard      string `json:"id_card"`      //เลขบัตรประจำตัว
+	UserId      uint64 `json:"user_id"`                  //ผู้ใช้งาน
+	Email       string `json:"email" binding:"required"` //อีเมล
+	Password    string `json:"password"`                 //รหัสผ่าน
+	Name        string `json:"name"`                     //ชื่อ
+	SurName     string `json:"sur_name"`                 //นามสกุล
+	PhoneNumber string `json:"phone_number"`             //เบอร์โทร
+	IdCard      string `json:"id_card"`                  //เลขบัตรประจำตัว
 }
 
 type FindUsersReq struct {
@@ -18,8 +17,8 @@ type FindUsersReq struct {
 	Email   string `json:"email" form:"email"`       //อีเมล
 }
 
-type FindUsersByUserIdReq struct {
-	UserId string `json:"user_id" form:"user_id"` //ผู้ใช้งาน
+type FindUsersByEmailReq struct {
+	Email string `json:"email" form:"email"` //ผู้ใช้งาน
 }
 
 type ValueReq struct {
@@ -27,15 +26,15 @@ type ValueReq struct {
 }
 
 type LoginReq struct {
-	UserId   string `json:"user_id"`  //ผู้ใช้งาน
-	Password string `json:"password"` //รหัสผ่าน
+	Email    string `json:"email" binding:"required"`    //ผู้ใช้งาน
+	Password string `json:"password" binding:"required"` //รหัสผ่าน
 }
 
 type UserResp struct {
-	UserId  string   `json:"user_id"`  //ผู้ใช้งาน
+	UserId  uint64   `json:"user_id"`  //ผู้ใช้งาน
+	Email   string   `json:"email"`    //อีเมล
 	Name    string   `json:"name"`     //ชื่อ
 	SurName string   `json:"sur_name"` //นามสกุล
-	Email   string   `json:"email"`    //อีเมล
 	Level   []string `json:"level"`    //เลเวล
 }
 

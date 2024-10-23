@@ -44,7 +44,7 @@ func (en *userEndPoint) FindUser(c *gin.Context) {
 // @Router /api/users/{user_id} [get]
 // @Security ApiKeyAuth
 func (en *userEndPoint) FindUsersByUserId(c *gin.Context) {
-	rander.RespJson(c, en.service.FindUsersByUserId, &schemas.FindUsersByUserIdReq{})
+	rander.RespJson(c, en.service.FindUsersByEmail, &schemas.FindUsersByEmailReq{})
 }
 
 // @Tags Users

@@ -38,6 +38,7 @@ import (
 func (s *Server) RegisterRoutes() http.Handler {
 
 	r := gin.Default()
+
 	r.Use(gzip.Gzip(gzip.DefaultCompression))
 	r.Use(gin.Recovery())
 	r.Use(cors.New(cors.Config{
@@ -70,16 +71,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.GET("/", s.HelloWorldHandler)
 	r.GET("/docs/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	userRep := repositories.NewUsersRepository(db, &s.config, "admin")
+	c := gin.Context{}
+	api := r.Group("/api")
+	userRep := repositories.NewUsersRepository(db, &s.config, middleware.GetUserProfile(&c))
 	userService := usecase.NewUserService(userRep)
 	userEndPoint := handlers.NewUserEndPoint(userService)
-
-	constRepo := repositories.NewConstRepository(db, &s.config, "admin")
-	constService := usecase.NewConstRepository(constRepo)
-	constEndPoint := handlers.NewConstEndpoint(constService)
-
-	_ = constEndPoint
-	api := r.Group("/api")
 	api.POST("/login", userEndPoint.Login)
 	{
 		us := api.Group("/users")
@@ -95,6 +91,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 		ct := api.Group("/const")
 		ct.Use(middleware.AuthMiddleware(s.config.JwtSECRETKEY))
+		constRepo := repositories.NewConstRepository(db, &s.config, "admin")
+		constService := usecase.NewConstRepository(constRepo)
+		constEndPoint := handlers.NewConstEndpoint(constService)
 		{
 			ct.POST("/createConst", constEndPoint.CreateConst)
 			ct.POST("/updateConst", constEndPoint.UpdateConst)

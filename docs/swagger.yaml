@@ -1,9 +1,6 @@
 definitions:
   arczed_internal_entities_models.Users:
     properties:
-      birth_day:
-        description: วันเกิด
-        type: string
       created_at:
         description: วันที่สร้าง
         type: string
@@ -51,7 +48,7 @@ definitions:
         type: string
       user_id:
         description: ไอดี ของผู้ใช้งาน
-        type: string
+        type: integer
     type: object
   arczed_internal_entities_models.UsersLevels:
     properties:
@@ -83,13 +80,10 @@ definitions:
         type: string
       userID:
         description: ต้องกำหนดประเภทและขนาดให้ตรงกับ Users.UserId
-        type: string
+        type: integer
     type: object
   arczed_internal_entities_schemas.AddUsers:
     properties:
-      birth_day:
-        description: วันเกิด
-        type: string
       email:
         description: อีเมล
         type: string
@@ -110,7 +104,9 @@ definitions:
         type: string
       user_id:
         description: ผู้ใช้งาน
-        type: string
+        type: integer
+    required:
+    - email
     type: object
   arczed_internal_entities_schemas.ConfigConstant:
     properties:
@@ -148,12 +144,15 @@ definitions:
     type: object
   arczed_internal_entities_schemas.LoginReq:
     properties:
+      email:
+        description: ผู้ใช้งาน
+        type: string
       password:
         description: รหัสผ่าน
         type: string
-      user_id:
-        description: ผู้ใช้งาน
-        type: string
+    required:
+    - email
+    - password
     type: object
   arczed_internal_entities_schemas.LoginResp:
     properties:
