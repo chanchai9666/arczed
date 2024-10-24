@@ -19,13 +19,13 @@ func (r *beseDB) Create(req *schemas.ConfigConstant) error {
 		return fmt.Errorf("failed to copy user data: %w", err)
 	}
 	if data.ConstID == "" {
+		//รายการใหม่ให้ทำการสร้าง id
 		countItem := r.CountItemByGroup(req.GroupId)
 		countItem = countItem + 1
 		maxSort := r.MaxSortByGroup(req.GroupId)
 		if countItem >= maxSort {
 			maxSort = countItem //ถ้าการนับจำนวน items ตามกลุ่มมากกว่า ค่า max ของ sort ให้เปลี่ยนการ running เป็นจำนวน items แทน
 		}
-
 		newId := req.GroupId + "-" + aider.PadZeros(3, aider.ToInt(countItem))
 		data.ConstID = newId
 		data.Sort = int(r.MaxSortByGroup(req.GroupId))
@@ -56,7 +56,8 @@ func (r *beseDB) Delete(id, group string) error {
 		return Delete(r.db.Scopes(WhereConstId(id), WhereGroupId(group)), &configConst)
 	})
 }
-func (r *beseDB) Find(req *schemas.ConfigConstant) ([]models.ConfigConstant, error) {
+func (r *beseDB) Find(req *schemas.ConfigConstant) (*Pagination[models.ConfigConstant], error) {
+
 	return nil, nil
 }
 

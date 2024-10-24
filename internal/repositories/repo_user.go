@@ -39,10 +39,18 @@ func (r *userDB) FindUsers(req *schemas.FindUsersReq) ([]models.Users, error) {
 		tx = tx.Where("user_id=?", req.UserId)
 	}
 
-	err := tx.Preload("Level").Scopes(WhereIsActive()).Find(&allusers).Error
+	pagination := &Pagination[models.Users]{
+		Sort: "email asc",
+	}
+	err := tx.Preload("Level").Scopes(
+		WhereIsActive(),
+		Paginate(r.db, models.Users{}, pagination),
+	).Find(&allusers).Error
 	if err != nil {
 		return nil, err
 	}
+	pagination.Rows = allusers
+	aider.DD(pagination)
 	return allusers, nil
 }
 func (r *userDB) UpdateUser(req *schemas.AddUsers) error {

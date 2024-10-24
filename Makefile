@@ -13,7 +13,7 @@ run:
 	@go run cmd/main.go
 
 swag:
-	@swag init -g internal/interface/routes.go --parseDependency --parseInternal
+	@swag init -g ./internal/interface/routes.go -d ./ --parseDependency --parseInternal
 	#swag init
 
 # Create DB container

@@ -182,7 +182,7 @@ definitions:
         type: string
       user_id:
         description: ผู้ใช้งาน
-        type: string
+        type: integer
     type: object
   gorm.DeletedAt:
     properties:

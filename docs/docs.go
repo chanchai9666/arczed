@@ -833,7 +833,7 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "ผู้ใช้งาน",
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         },
