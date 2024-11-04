@@ -164,6 +164,24 @@ definitions:
         - $ref: '#/definitions/arczed_internal_entities_schemas.UserResp'
         description: ข้อมูลผู้ใช้
     type: object
+  arczed_internal_entities_schemas.Pagination-arczed_internal_entities_models_ConfigConstant:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      rows:
+        description: เพิ่ม swaggertype:"array,object" เพื่อให้ swagger init ได้
+        items:
+          type: object
+        type: array
+      sort:
+        type: string
+      total_pages:
+        type: integer
+      total_rows:
+        type: integer
+    type: object
   arczed_internal_entities_schemas.UserResp:
     properties:
       email:
@@ -272,6 +290,33 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: ลบข้อมูล ค่าคงที่
+      tags:
+      - Const
+  /api/const/findConstAll:
+    get:
+      consumes:
+      - application/json
+      description: แสดงข้อมูลค่าคงที่ทั้งหมด
+      parameters:
+      - default: th
+        description: (en, th)
+        in: header
+        name: Accept-Language
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/arczed_internal_entities_schemas.Pagination-arczed_internal_entities_models_ConfigConstant'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/arczed_internal_entities_schemas.HTTPError'
+      security:
+      - ApiKeyAuth: []
+      summary: แสดงข้อมูลค่าคงที่ทั้งหมด
       tags:
       - Const
   /api/const/updateConst:

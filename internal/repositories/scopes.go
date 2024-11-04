@@ -42,6 +42,7 @@ func WhereIsActive(table ...string) func(db *gorm.DB) *gorm.DB {
 // 	}
 // }
 
+// where user_id
 func WhereUserId(data ...string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		fieldName := "user_id"
@@ -58,10 +59,12 @@ func WhereUserId(data ...string) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
+// where const_id
 func WhereConstId(data ...string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		fieldName := "const_id"
-		if len(data) == 0 {
+		x := data[0] == ""
+		if len(data) == 0 || x {
 			return db // ไม่มีค่า input คืนค่า db กลับไปโดยไม่ทำอะไร
 		}
 		condition := fieldName + " = ?"
@@ -74,10 +77,12 @@ func WhereConstId(data ...string) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
+// where group_id
 func WhereGroupId(data ...string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		fieldName := "group_id"
-		if len(data) == 0 {
+		x := data[0] == ""
+		if len(data) == 0 || x {
 			return db // ไม่มีค่า input คืนค่า db กลับไปโดยไม่ทำอะไร
 		}
 		condition := fieldName + " = ?"
@@ -88,4 +93,19 @@ func WhereGroupId(data ...string) func(db *gorm.DB) *gorm.DB {
 		}
 		return db.Where(condition, value)
 	}
+}
+
+// where amount>1000 [แบบฟิกค่า]
+func AmountGreaterThan1000(db *gorm.DB) *gorm.DB {
+	return db.Where("amount > ?", 1000)
+}
+
+// where pay_mode=card [แบบฟิกค่า]
+func PaidWithCreditCard(db *gorm.DB) *gorm.DB {
+	return db.Where("pay_mode = ?", "card")
+}
+
+// where pay_mode=cod [แบบฟิกค่า]
+func PaidWithCod(db *gorm.DB) *gorm.DB {
+	return db.Where("pay_mode = ?", "cod")
 }

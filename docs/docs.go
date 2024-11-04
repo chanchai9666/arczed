@@ -132,6 +132,49 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/const/findConstAll": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "แสดงข้อมูลค่าคงที่ทั้งหมด",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Const"
+                ],
+                "summary": "แสดงข้อมูลค่าคงที่ทั้งหมด",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "th",
+                        "description": "(en, th)",
+                        "name": "Accept-Language",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/arczed_internal_entities_schemas.Pagination-arczed_internal_entities_models_ConfigConstant"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/arczed_internal_entities_schemas.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/const/updateConst": {
             "post": {
                 "security": [
@@ -806,6 +849,33 @@ const docTemplate = `{
                             "$ref": "#/definitions/arczed_internal_entities_schemas.UserResp"
                         }
                     ]
+                }
+            }
+        },
+        "arczed_internal_entities_schemas.Pagination-arczed_internal_entities_models_ConfigConstant": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "rows": {
+                    "description": "เพิ่ม swaggertype:\"array,object\" เพื่อให้ swagger init ได้",
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                },
+                "sort": {
+                    "type": "string"
+                },
+                "total_pages": {
+                    "type": "integer"
+                },
+                "total_rows": {
+                    "type": "integer"
                 }
             }
         },

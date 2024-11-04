@@ -95,9 +95,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 		constService := usecase.NewConstRepository(constRepo)
 		constEndPoint := handlers.NewConstEndpoint(constService)
 		{
+			ct.GET("/findConstAll", constEndPoint.FindConstAll)
 			ct.POST("/createConst", constEndPoint.CreateConst)
 			ct.POST("/updateConst", constEndPoint.UpdateConst)
 			ct.DELETE("/deleteConst/:group_id/:const_id", constEndPoint.DeleteConst)
+
 		}
 
 	}

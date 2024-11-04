@@ -50,7 +50,7 @@ func (r *userDB) FindUsers(req *schemas.FindUsersReq) ([]models.Users, error) {
 		return nil, err
 	}
 	pagination.Rows = allusers
-	aider.DD(pagination)
+	// aider.DDD(pagination)
 	return allusers, nil
 }
 func (r *userDB) UpdateUser(req *schemas.AddUsers) error {
@@ -79,7 +79,6 @@ func (r *userDB) DeletedUser(userID uint64) error {
 		return nil
 	})
 }
-
 func (r *userDB) NewJwt(req *schemas.JwtReq) (string, error) {
 	jwt, err := safety.GenerateJWT(r.config.JwtSECRETKEY, &safety.JwtConst{
 		UserId:   req.UserId,

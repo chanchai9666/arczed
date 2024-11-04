@@ -13,6 +13,7 @@ import (
 	"arczed/pkg"
 )
 
+// เพิ่มข้อมูลค่าคงที่
 func (r *beseDB) Create(req *schemas.ConfigConstant) error {
 	var data models.ConfigConstant
 	if err := copier.Copy(&data, req); err != nil {
@@ -40,6 +41,8 @@ func (r *beseDB) CountItemByGroup(group string) int64 {
 	numItem := Count(r.db.Unscoped().Scopes(WhereGroupId(group)), &models.ConfigConstant{})
 	return numItem
 }
+
+// อัพเดตค่าคงที่
 func (r *beseDB) Update(req *schemas.ConfigConstant) error {
 	return Transaction(r.db, func(d *gorm.DB) error {
 		var data models.ConfigConstant
@@ -49,6 +52,8 @@ func (r *beseDB) Update(req *schemas.ConfigConstant) error {
 		return Updates(r.db.Scopes(WhereConstId(data.ConstID), WhereGroupId(data.GroupID)), &data)
 	})
 }
+
+// ลบค่าคงที่
 func (r *beseDB) Delete(id, group string) error {
 	return Transaction(r.db, func(d *gorm.DB) error {
 		var configConst models.ConfigConstant
@@ -56,9 +61,39 @@ func (r *beseDB) Delete(id, group string) error {
 		return Delete(r.db.Scopes(WhereConstId(id), WhereGroupId(group)), &configConst)
 	})
 }
-func (r *beseDB) Find(req *schemas.ConfigConstant) (*Pagination[models.ConfigConstant], error) {
 
-	return nil, nil
+// query ค้นหาค่าคงที่
+func (r *beseDB) FindConst(req *schemas.ConfigConstant) *gorm.DB {
+	return r.db.
+		Scopes(
+			WhereIsActive(),
+			WhereConstId(req.ConstId),
+			WhereGroupId(req.GroupId),
+		)
+}
+
+// ค้นหาแบบแบ่งหน้า
+func (r *beseDB) FindPage(req *schemas.ConfigConstant) (*Pagination[models.ConfigConstant], error) {
+	constData := []models.ConfigConstant{}
+	pagination := &Pagination[models.ConfigConstant]{
+		Sort: "group_id,sort asc",
+	}
+	if err := r.FindConst(req).
+		Scopes(Paginate(r.db, models.ConfigConstant{}, pagination)).
+		Find(&constData).Error; err != nil {
+		return nil, err
+	}
+	pagination.Rows = constData
+	return pagination, nil
+}
+
+// ค้นหาทั้งหมด
+func (r *beseDB) FindAll(req *schemas.ConfigConstant) ([]models.ConfigConstant, error) {
+	constData := []models.ConfigConstant{}
+	if err := r.FindConst(req).Order("group_id,sort asc").Find(&constData).Error; err != nil {
+		return nil, err
+	}
+	return constData, nil
 }
 
 // หาค่า Max Sort ของค่าคงที่ตามกลุ่มสำหรับ running sort ของแต่ละกลุ่ม

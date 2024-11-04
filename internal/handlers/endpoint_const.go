@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 
+	_ "arczed/internal/entities/models"
 	"arczed/internal/entities/schemas"
 	"arczed/internal/rander"
 	"arczed/internal/usecase"
@@ -60,4 +63,19 @@ func (en *constEndPoint) UpdateConst(c *gin.Context) {
 // @Security ApiKeyAuth
 func (en *constEndPoint) DeleteConst(c *gin.Context) {
 	rander.RespSuccess(c, en.service.DeleteConst, &schemas.ConfigConstant{})
+}
+
+// @Tags Const
+// @Summary แสดงข้อมูลค่าคงที่ทั้งหมด
+// @Description แสดงข้อมูลค่าคงที่ทั้งหมด
+// @Accept  json
+// @Produce  json
+// @Param Accept-Language header string false "(en, th)" default(th)
+// @Success 200 {object} schemas.Pagination[models.ConfigConstant]
+// @Failure 400 {object} schemas.HTTPError
+// @Router /api/const/findConstAll [get]
+// @Security ApiKeyAuth
+func (en *constEndPoint) FindConstAll(c *gin.Context) {
+	fmt.Println("11111")
+	rander.RespJsonNoReq(c, en.service.Find)
 }

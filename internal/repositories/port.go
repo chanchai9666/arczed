@@ -44,7 +44,9 @@ type UsersRepository interface {
 }
 
 type ConstRepository interface {
-	Create(req *schemas.ConfigConstant) error //เพิ่ม ค่าคงที่
-	Update(req *schemas.ConfigConstant) error //แก้ไข ค่าคงที่
-	Delete(id, group string) error            //ลบค่าคงที่
+	Create(req *schemas.ConfigConstant) error                                         //เพิ่ม ค่าคงที่
+	Update(req *schemas.ConfigConstant) error                                         //แก้ไข ค่าคงที่
+	Delete(id, group string) error                                                    //ลบค่าคงที่
+	FindPage(req *schemas.ConfigConstant) (*Pagination[models.ConfigConstant], error) //ค้าหาค่าคงที่แบบแบ่งหน้า
+	FindAll(req *schemas.ConfigConstant) ([]models.ConfigConstant, error)             //ค้นหาค่าคงที่ทั้งหมด
 }

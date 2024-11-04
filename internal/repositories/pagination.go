@@ -42,9 +42,9 @@ func (p *Pagination[T]) GetSort() string {
 }
 
 // ส่วนการแบ่งหน้า
-func Paginate[T any](db *gorm.DB, value T, pagination *Pagination[T]) func(db *gorm.DB) *gorm.DB {
+func Paginate[T any](db *gorm.DB, models T, pagination *Pagination[T]) func(db *gorm.DB) *gorm.DB {
 	var totalRows int64
-	db.Model(value).Count(&totalRows)
+	db.Model(models).Count(&totalRows)
 
 	pagination.TotalRows = totalRows
 	totalPages := int(math.Ceil(float64(totalRows) / float64(pagination.GetLimit())))

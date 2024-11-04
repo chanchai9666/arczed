@@ -83,8 +83,6 @@ func (s *userRequest) Login(req *schemas.LoginReq) (*schemas.LoginResp, error) {
 		return nil, aider.NewError(aider.ErrInternal, "ข้อมูลไม่ครบถ้วน")
 	}
 
-	aider.DDD(aider.HashPassword("1234"))
-
 	// ตรวจสอบรหัสผ่าน
 	if !aider.CheckPassword(req.Password, result.Password) {
 		return nil, aider.NewError(aider.ErrInternal, "รหัสผ่านไม่ถูกต้อง")
@@ -124,6 +122,6 @@ func (s *userRequest) Login(req *schemas.LoginReq) (*schemas.LoginResp, error) {
 	}
 
 	userLogin.AccessToken = token
-
+	aider.DDD(userLogin)
 	return &userLogin, nil
 }

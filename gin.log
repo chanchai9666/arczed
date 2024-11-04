@@ -7,6 +7,7 @@
 [GIN-debug] POST   /api/users/createUsers    --> arczed/internal/handlers.(*userEndPoint).CreateUsers-fm (7 handlers)
 [GIN-debug] POST   /api/users/updateUsers    --> arczed/internal/handlers.(*userEndPoint).UpdateUsers-fm (7 handlers)
 [GIN-debug] DELETE /api/users/deleteUsers/:user_id --> arczed/internal/handlers.(*userEndPoint).DeleteUsers-fm (7 handlers)
+[GIN-debug] GET    /api/const/findConstAll   --> arczed/internal/handlers.(*constEndPoint).FindConstAll-fm (7 handlers)
 [GIN-debug] POST   /api/const/createConst    --> arczed/internal/handlers.(*constEndPoint).CreateConst-fm (7 handlers)
 [GIN-debug] POST   /api/const/updateConst    --> arczed/internal/handlers.(*constEndPoint).UpdateConst-fm (7 handlers)
 [GIN-debug] DELETE /api/const/deleteConst/:group_id/:const_id --> arczed/internal/handlers.(*constEndPoint).DeleteConst-fm (7 handlers)
