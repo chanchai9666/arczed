@@ -50,7 +50,7 @@ func (r *userDB) FindUsers(req *schemas.FindUsersReq) ([]models.Users, error) {
 		return nil, err
 	}
 	pagination.Rows = allusers
-	// aider.DDD(pagination)
+	// aider.DD(allusers)
 	return allusers, nil
 }
 func (r *userDB) UpdateUser(req *schemas.AddUsers) error {

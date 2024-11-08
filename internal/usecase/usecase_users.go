@@ -103,25 +103,19 @@ func (s *userRequest) Login(req *schemas.LoginReq) (*schemas.LoginResp, error) {
 	userLogin.User = userData
 	userLogin.User.Level = levelVal
 
-	// ตรวจสอบและตั้งค่า Email
-	email := ""
-	if result.Email != "" {
-		email = result.Email
-	}
-
 	// สร้าง JWT
 	token, err := s.repo.NewJwt(&schemas.JwtReq{
 		UserId:  aider.ToString(result.UserId),
 		Name:    result.Name,
 		SurName: result.SurName,
-		Email:   email,
+		Email:   result.Email,
 		Level:   strLvl,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	userLogin.AccessToken = token
+	userLogin.AccessToken = "Bearer " + token
 	aider.DDD(userLogin)
 	return &userLogin, nil
 }

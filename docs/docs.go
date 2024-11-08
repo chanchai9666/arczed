@@ -132,6 +132,103 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/const/findConst": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "แสดงข้อมูลค่าคงที่แบบแบ่งหน้า",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Const"
+                ],
+                "summary": "แสดงข้อมูลค่าคงที่แบบแบ่งหน้า",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "th",
+                        "description": "(en, th)",
+                        "name": "Accept-Language",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ไอดีค่าคงที่",
+                        "name": "const_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ไอดีกลุ่มค่าคงที่",
+                        "name": "group_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "สถานะใช้งาน",
+                        "name": "is_active",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ชื่อค่าคงที่ EN",
+                        "name": "name_en",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ชื่อค่าคงที่ TH",
+                        "name": "name_th",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ค่าอ้างอิง 1",
+                        "name": "ref_value1",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ค่าอ้างอิง 2",
+                        "name": "ref_value2",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ค่าอ้างอิง 3",
+                        "name": "ref_value3",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ลำดับ",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/arczed_internal_entities_schemas.Pagination-arczed_internal_entities_models_ConfigConstant"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/arczed_internal_entities_schemas.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/const/findConstAll": {
             "get": {
                 "security": [
@@ -157,6 +254,60 @@ const docTemplate = `{
                         "description": "(en, th)",
                         "name": "Accept-Language",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ไอดีค่าคงที่",
+                        "name": "const_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ไอดีกลุ่มค่าคงที่",
+                        "name": "group_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "สถานะใช้งาน",
+                        "name": "is_active",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ชื่อค่าคงที่ EN",
+                        "name": "name_en",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ชื่อค่าคงที่ TH",
+                        "name": "name_th",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ค่าอ้างอิง 1",
+                        "name": "ref_value1",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ค่าอ้างอิง 2",
+                        "name": "ref_value2",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ค่าอ้างอิง 3",
+                        "name": "ref_value3",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ลำดับ",
+                        "name": "sort",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -781,6 +932,10 @@ const docTemplate = `{
                     "description": "ไอดีกลุ่มค่าคงที่",
                     "type": "string"
                 },
+                "is_active": {
+                    "description": "สถานะใช้งาน",
+                    "type": "integer"
+                },
                 "name_en": {
                     "description": "ชื่อค่าคงที่ EN",
                     "type": "string"
@@ -827,11 +982,13 @@ const docTemplate = `{
             "properties": {
                 "email": {
                     "description": "ผู้ใช้งาน",
-                    "type": "string"
+                    "type": "string",
+                    "example": "admin@admin.com"
                 },
                 "password": {
                     "description": "รหัสผ่าน",
-                    "type": "string"
+                    "type": "string",
+                    "example": "1234"
                 }
             }
         },

@@ -12,8 +12,8 @@ type ConstService interface {
 	CreateConst(req *schemas.ConfigConstant) error
 	UpdateConst(req *schemas.ConfigConstant) error
 	DeleteConst(req *schemas.ConfigConstant) error
-	Find() (*schemas.Pagination[models.ConfigConstant], error)            //หาค่าคงที่แบบแบ่งหน้า
-	FindAll(req *schemas.ConfigConstant) ([]models.ConfigConstant, error) //หาค่าคงที่ทั้งหมด
+	Find(req *schemas.ConfigConstant) (*schemas.Pagination[models.ConfigConstant], error) //หาค่าคงที่แบบแบ่งหน้า
+	FindAll(req *schemas.ConfigConstant) ([]models.ConfigConstant, error)                 //หาค่าคงที่ทั้งหมด
 }
 
 type ConstRepository struct {
@@ -38,8 +38,8 @@ func (s *ConstRepository) DeleteConst(req *schemas.ConfigConstant) error {
 	return s.repo.Delete(req.ConstId, req.GroupId)
 }
 
-func (s *ConstRepository) Find() (*schemas.Pagination[models.ConfigConstant], error) {
-	data, err := s.repo.FindPage(&schemas.ConfigConstant{})
+func (s *ConstRepository) Find(req *schemas.ConfigConstant) (*schemas.Pagination[models.ConfigConstant], error) {
+	data, err := s.repo.FindPage(req)
 	if err != nil {
 		return nil, err
 	}

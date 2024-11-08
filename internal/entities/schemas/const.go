@@ -8,5 +8,6 @@ type ConfigConstant struct {
 	RefValue1 string `json:"ref_value1" form:"ref_value1"` //ค่าอ้างอิง 1
 	RefValue2 string `json:"ref_value2" form:"ref_value2"` //ค่าอ้างอิง 2
 	RefValue3 string `json:"ref_value3" form:"ref_value3"` //ค่าอ้างอิง 3
+	IsActive  string `json:"is_active" form:"is_active"`   //สถานะใช้งาน
 	Sort      int    `json:"sort" form:"sort"`             //ลำดับ
 }

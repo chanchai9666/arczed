@@ -15,32 +15,30 @@ func Where2(data ...string) func(db *gorm.DB) *gorm.DB {
 		return db.Where(condition, value)
 	}
 }
-func WhereIsActive(table ...string) func(db *gorm.DB) *gorm.DB {
+
+func WhereIsActive(status ...string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		condition := "is_active=?"
-		if len(table) > 0 && table[0] != "" {
-			condition = table[0] + ".is_active=?"
+		fieldName := "is_active"
+		isActive := "1" // Default to active
+
+		// Assign default active status if no argument is provided
+		if len(status) > 0 && status[0] != "" {
+			isActive = status[0]
 		}
-		return db.Where(condition, 1)
+
+		// Check if isActive is set to inactive ("0")
+		if isActive == "0" {
+			db = db.Unscoped() // Ignore soft-deleted records
+		}
+
+		// Additional conditions based on multiple arguments
+		if len(status) > 1 {
+			return Where2(isActive, fieldName, status[1])(db)
+		}
+
+		return db.Where(fieldName+" = ?", isActive)
 	}
 }
-
-// func WhereUserId(data ...string) func(db *gorm.DB) *gorm.DB {
-// 	return func(db *gorm.DB) *gorm.DB {
-// 		if len(data) == 0 {
-// 			return db // ไม่มีค่า input คืนค่า db กลับไปโดยไม่ทำอะไร
-// 		}
-// 		value := data[0]
-// 		condition := "user_id = ?"
-// 		if len(data) > 1 {
-// 			tableName := data[0]
-// 			value = data[1]
-// 			condition = fmt.Sprintf("%s.user_id = ?", tableName)
-// 		}
-
-// 		return db.Where(condition, value)
-// 	}
-// }
 
 // where user_id
 func WhereUserId(data ...string) func(db *gorm.DB) *gorm.DB {

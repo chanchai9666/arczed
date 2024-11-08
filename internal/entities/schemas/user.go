@@ -26,8 +26,8 @@ type ValueReq struct {
 }
 
 type LoginReq struct {
-	Email    string `json:"email" binding:"required"`    //ผู้ใช้งาน
-	Password string `json:"password" binding:"required"` //รหัสผ่าน
+	Email    string `json:"email" binding:"required"  example:"admin@admin.com"` //ผู้ใช้งาน
+	Password string `json:"password" binding:"required"  example:"1234"`         //รหัสผ่าน
 }
 
 type UserResp struct {

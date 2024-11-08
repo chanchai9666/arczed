@@ -96,6 +96,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 		constEndPoint := handlers.NewConstEndpoint(constService)
 		{
 			ct.GET("/findConstAll", constEndPoint.FindConstAll)
+			ct.GET("/findConst", constEndPoint.FindConst)
 			ct.POST("/createConst", constEndPoint.CreateConst)
 			ct.POST("/updateConst", constEndPoint.UpdateConst)
 			ct.DELETE("/deleteConst/:group_id/:const_id", constEndPoint.DeleteConst)

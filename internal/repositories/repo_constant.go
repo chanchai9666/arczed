@@ -29,7 +29,7 @@ func (r *beseDB) Create(req *schemas.ConfigConstant) error {
 		}
 		newId := req.GroupId + "-" + aider.PadZeros(3, aider.ToInt(countItem))
 		data.ConstID = newId
-		data.Sort = int(r.MaxSortByGroup(req.GroupId))
+		data.Sort = int(maxSort)
 	}
 	return Transaction(r.db, func(tx *gorm.DB) error {
 		return Insert(r.db, &data)
@@ -66,7 +66,7 @@ func (r *beseDB) Delete(id, group string) error {
 func (r *beseDB) FindConst(req *schemas.ConfigConstant) *gorm.DB {
 	return r.db.
 		Scopes(
-			WhereIsActive(),
+			WhereIsActive(req.IsActive),
 			WhereConstId(req.ConstId),
 			WhereGroupId(req.GroupId),
 		)
@@ -78,8 +78,8 @@ func (r *beseDB) FindPage(req *schemas.ConfigConstant) (*Pagination[models.Confi
 	pagination := &Pagination[models.ConfigConstant]{
 		Sort: "group_id,sort asc",
 	}
-	if err := r.FindConst(req).
-		Scopes(Paginate(r.db, models.ConfigConstant{}, pagination)).
+	query := r.FindConst(req)
+	if err := query.Scopes(Paginate(query, models.ConfigConstant{}, pagination)).
 		Find(&constData).Error; err != nil {
 		return nil, err
 	}
@@ -104,6 +104,9 @@ func (r *beseDB) MaxSortByGroup(group string) int64 {
 		log.Println("Get Max Sort Error :", err.Error())
 		return 0
 	}
+	// query := r.db.Unscoped().Select("MAX(sort)").Scopes(WhereGroupId(group))
+	// maxSort := Count(query, &models.ConfigConstant{})
+
 	maxSort = maxSort + 1
 	return maxSort
 }

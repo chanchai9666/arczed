@@ -116,6 +116,9 @@ definitions:
       group_id:
         description: ไอดีกลุ่มค่าคงที่
         type: string
+      is_active:
+        description: สถานะใช้งาน
+        type: integer
       name_en:
         description: ชื่อค่าคงที่ EN
         type: string
@@ -146,9 +149,11 @@ definitions:
     properties:
       email:
         description: ผู้ใช้งาน
+        example: admin@admin.com
         type: string
       password:
         description: รหัสผ่าน
+        example: "1234"
         type: string
     required:
     - email
@@ -292,6 +297,69 @@ paths:
       summary: ลบข้อมูล ค่าคงที่
       tags:
       - Const
+  /api/const/findConst:
+    get:
+      consumes:
+      - application/json
+      description: แสดงข้อมูลค่าคงที่แบบแบ่งหน้า
+      parameters:
+      - default: th
+        description: (en, th)
+        in: header
+        name: Accept-Language
+        type: string
+      - description: ไอดีค่าคงที่
+        in: query
+        name: const_id
+        type: string
+      - description: ไอดีกลุ่มค่าคงที่
+        in: query
+        name: group_id
+        type: string
+      - description: สถานะใช้งาน
+        in: query
+        name: is_active
+        type: integer
+      - description: ชื่อค่าคงที่ EN
+        in: query
+        name: name_en
+        type: string
+      - description: ชื่อค่าคงที่ TH
+        in: query
+        name: name_th
+        type: string
+      - description: ค่าอ้างอิง 1
+        in: query
+        name: ref_value1
+        type: string
+      - description: ค่าอ้างอิง 2
+        in: query
+        name: ref_value2
+        type: string
+      - description: ค่าอ้างอิง 3
+        in: query
+        name: ref_value3
+        type: string
+      - description: ลำดับ
+        in: query
+        name: sort
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/arczed_internal_entities_schemas.Pagination-arczed_internal_entities_models_ConfigConstant'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/arczed_internal_entities_schemas.HTTPError'
+      security:
+      - ApiKeyAuth: []
+      summary: แสดงข้อมูลค่าคงที่แบบแบ่งหน้า
+      tags:
+      - Const
   /api/const/findConstAll:
     get:
       consumes:
@@ -303,6 +371,42 @@ paths:
         in: header
         name: Accept-Language
         type: string
+      - description: ไอดีค่าคงที่
+        in: query
+        name: const_id
+        type: string
+      - description: ไอดีกลุ่มค่าคงที่
+        in: query
+        name: group_id
+        type: string
+      - description: สถานะใช้งาน
+        in: query
+        name: is_active
+        type: integer
+      - description: ชื่อค่าคงที่ EN
+        in: query
+        name: name_en
+        type: string
+      - description: ชื่อค่าคงที่ TH
+        in: query
+        name: name_th
+        type: string
+      - description: ค่าอ้างอิง 1
+        in: query
+        name: ref_value1
+        type: string
+      - description: ค่าอ้างอิง 2
+        in: query
+        name: ref_value2
+        type: string
+      - description: ค่าอ้างอิง 3
+        in: query
+        name: ref_value3
+        type: string
+      - description: ลำดับ
+        in: query
+        name: sort
+        type: integer
       produces:
       - application/json
       responses:
