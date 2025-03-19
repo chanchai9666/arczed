@@ -13,7 +13,7 @@ type ConstService interface {
 	UpdateConst(req *schemas.ConfigConstant) error
 	DeleteConst(req *schemas.ConfigConstant) error
 	Find(req *schemas.ConfigConstant) (*schemas.Pagination[models.ConfigConstant], error) //หาค่าคงที่แบบแบ่งหน้า
-	FindAll(req *schemas.ConfigConstant) ([]models.ConfigConstant, error)                 //หาค่าคงที่ทั้งหมด
+	FindAll(req *schemas.ConfigConstant) ([]schemas.ConfigConstantResp, error)            //หาค่าคงที่ทั้งหมด
 }
 
 type ConstRepository struct {
@@ -43,20 +43,35 @@ func (s *ConstRepository) Find(req *schemas.ConfigConstant) (*schemas.Pagination
 	if err != nil {
 		return nil, err
 	}
-	_ = data
+
+	// constData := []schemas.ConfigConstantResp{}
+	_ = data.Rows
+
 	newData := &schemas.Pagination[models.ConfigConstant]{}
 	if err := copier.Copy(&newData, data); err != nil {
 		return nil, err
 	}
-
 	_ = newData
 	return newData, nil
 }
 
-func (s *ConstRepository) FindAll(req *schemas.ConfigConstant) ([]models.ConfigConstant, error) {
+func (s *ConstRepository) FindAll(req *schemas.ConfigConstant) ([]schemas.ConfigConstantResp, error) {
+	req.IsActive = "-1" //-1 คือทั้งหมด
 	data, err := s.repo.FindAll(req)
 	if err != nil {
 		return nil, err
 	}
-	return data, nil
+	constData := []schemas.ConfigConstantResp{}
+	if err := copier.Copy(&constData, data); err != nil {
+		return nil, err
+	}
+	for i, v := range constData {
+		if v.BaseColumn.IsActive != nil && *v.BaseColumn.IsActive == 1 {
+			constData[i].IsActiveTxt = "ใช้งาน"
+		} else {
+			constData[i].IsActiveTxt = "ไม่ใช้งาน"
+		}
+	}
+
+	return constData, nil
 }

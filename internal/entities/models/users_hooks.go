@@ -26,14 +26,14 @@ func (u *Users) BeforeCreate(tx *gorm.DB) (err error) {
 
 func (u *Users) AfterCreate(tx *gorm.DB) (err error) {
 	//เพิ่มข้อมูล Level เริ่มต้นหลังจากเพิ่มข้อมูล User
-	leveUser := UsersLevels{
+	levelUser := UsersLevels{
 		UserID: u.UserId,
 		Level:  "user",
 	}
-	leveUser.CreatedAt = u.CreatedAt
-	leveUser.CreatedUser = u.CreatedUser
+	levelUser.CreatedAt = u.CreatedAt
+	levelUser.CreatedUser = u.CreatedUser
 
-	tx.Create(&leveUser)
+	tx.Create(&levelUser)
 	if tx.Error != nil {
 		return tx.Error
 	}

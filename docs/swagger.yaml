@@ -118,7 +118,7 @@ definitions:
         type: string
       is_active:
         description: สถานะใช้งาน
-        type: integer
+        type: string
       name_en:
         description: ชื่อค่าคงที่ EN
         type: string
@@ -137,6 +137,58 @@ definitions:
       sort:
         description: ลำดับ
         type: integer
+    type: object
+  arczed_internal_entities_schemas.ConfigConstantResp:
+    properties:
+      const_id:
+        description: ไอดีค่าคงที่
+        type: string
+      created_at:
+        description: วันที่สร้าง
+        type: string
+      created_user:
+        description: ผู้สร้าง
+        type: string
+      deleted_at:
+        allOf:
+        - $ref: '#/definitions/gorm.DeletedAt'
+        description: วันเวลาที่ลบ
+      deleted_user:
+        description: ผุ้ลบ
+        type: string
+      group_id:
+        description: ไอดีกลุ่มค่าคงที่
+        type: string
+      is_active:
+        description: สถานะใช้งาน
+        type: integer
+      is_active_txt:
+        description: สถานะใช้งาน
+        type: string
+      name_en:
+        description: ชื่อค่าคงที่ EN
+        type: string
+      name_th:
+        description: ชื่อค่าคงที่ TH
+        type: string
+      ref_value1:
+        description: ค่าอ้างอิง 1
+        type: string
+      ref_value2:
+        description: ค่าอ้างอิง 2
+        type: string
+      ref_value3:
+        description: ค่าอ้างอิง 3
+        type: string
+      sort:
+        description: ลำดับ
+        type: integer
+      updated_at:
+        description: วันเวลาที่อัพเดทล่าสุด
+        type: string
+      updated_user:
+        description: ผู้อัพเดทล่าสุด
+        type: string
     type: object
   arczed_internal_entities_schemas.HTTPError:
     properties:
@@ -186,6 +238,18 @@ definitions:
         type: integer
       total_rows:
         type: integer
+    type: object
+  arczed_internal_entities_schemas.RefreshTokenReq:
+    properties:
+      email:
+        description: อีเมล
+        type: string
+      user_id:
+        description: ผู้ใช้งาน
+        type: integer
+    required:
+    - email
+    - user_id
     type: object
   arczed_internal_entities_schemas.UserResp:
     properties:
@@ -319,7 +383,7 @@ paths:
       - description: สถานะใช้งาน
         in: query
         name: is_active
-        type: integer
+        type: string
       - description: ชื่อค่าคงที่ EN
         in: query
         name: name_en
@@ -382,7 +446,7 @@ paths:
       - description: สถานะใช้งาน
         in: query
         name: is_active
-        type: integer
+        type: string
       - description: ชื่อค่าคงที่ EN
         in: query
         name: name_en
@@ -413,7 +477,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/arczed_internal_entities_schemas.Pagination-arczed_internal_entities_models_ConfigConstant'
+            $ref: '#/definitions/arczed_internal_entities_schemas.ConfigConstantResp'
         "400":
           description: Bad Request
           schema:
@@ -482,9 +546,39 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/arczed_internal_entities_schemas.HTTPError'
+      summary: Login เข้าใช้งาน
+      tags:
+      - Auth
+  /api/refreshToken:
+    post:
+      consumes:
+      - application/json
+      description: Refresh เพื่อขอ Token เข้าใช้งานระบบใหม่
+      parameters:
+      - default: th
+        description: (en, th)
+        in: header
+        name: Accept-Language
+        type: string
+      - description: ' request body '
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/arczed_internal_entities_schemas.RefreshTokenReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/arczed_internal_entities_schemas.LoginResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/arczed_internal_entities_schemas.HTTPError'
       security:
       - ApiKeyAuth: []
-      summary: Login เข้าใช้งาน
+      summary: ขอ Token เข้าใช้งานระบบใหม่
       tags:
       - Auth
   /api/users:

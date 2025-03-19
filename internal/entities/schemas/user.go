@@ -50,3 +50,8 @@ type JwtReq struct {
 	Email   string `json:"email"`    //อีเมล
 	Level   string `json:"level"`    //เลเวล
 }
+
+type RefreshTokenReq struct {
+	UserId uint64 `json:"user_id" binding:"required"` //ผู้ใช้งาน
+	Email  string `json:"email" binding:"required"`   //อีเมล
+}

@@ -20,6 +20,7 @@ type UsersService interface {
 	UpdateUsers(req *schemas.AddUsers) error
 	DeleteUsers(req *schemas.AddUsers) error
 	Login(req *schemas.LoginReq) (*schemas.LoginResp, error)
+	RefreshToken(req *schemas.RefreshTokenReq) (*schemas.LoginResp, error)
 }
 
 type userRequest struct {
@@ -118,4 +119,48 @@ func (s *userRequest) Login(req *schemas.LoginReq) (*schemas.LoginResp, error) {
 	userLogin.AccessToken = "Bearer " + token
 	aider.DDD(userLogin)
 	return &userLogin, nil
+}
+
+func (s *userRequest) RefreshToken(req *schemas.RefreshTokenReq) (*schemas.LoginResp, error) {
+	// ดึงข้อมูลผู้ใช้ตาม UserID
+	result, err := s.FindUsersByEmail(&schemas.FindUsersByEmailReq{Email: req.Email})
+	if err != nil {
+		return nil, err
+	}
+	// ตรวจสอบความถูกต้อง
+	if req.UserId != result.UserId {
+		return nil, aider.NewError(aider.ErrInternal, "ข้อมูลไม่ครบถ้วน")
+	}
+
+	// คัดลอกข้อมูลผู้ใช้
+	var userLogin schemas.LoginResp
+	var userData schemas.UserResp
+	if err := copier.Copy(&userData, result); err != nil {
+		return nil, err
+	}
+
+	levelVal := []string{}
+	for _, v := range result.Level {
+		levelVal = append(levelVal, v.Level)
+	}
+	strLvl := strings.Join(levelVal, ",")
+	userLogin.User = userData
+	userLogin.User.Level = levelVal
+
+	// สร้าง JWT
+	token, err := s.repo.NewJwt(&schemas.JwtReq{
+		UserId:  aider.ToString(result.UserId),
+		Name:    result.Name,
+		SurName: result.SurName,
+		Email:   result.Email,
+		Level:   strLvl,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	userLogin.AccessToken = "Bearer " + token
+	aider.DDD(userLogin)
+	return &userLogin, nil
+
 }

@@ -1,6 +1,7 @@
 [GIN-debug] GET    /                         --> arczed/internal/interface.(*Server).HelloWorldHandler-fm (6 handlers)
 [GIN-debug] GET    /docs/swagger/*any        --> github.com/swaggo/gin-swagger.CustomWrapHandler.func1 (6 handlers)
 [GIN-debug] POST   /api/login                --> arczed/internal/handlers.(*userEndPoint).Login-fm (6 handlers)
+[GIN-debug] POST   /api/refreshToken         --> arczed/internal/handlers.(*userEndPoint).RefreshToken-fm (7 handlers)
 [GIN-debug] GET    /api/users/               --> arczed/internal/handlers.(*userEndPoint).FindUser-fm (7 handlers)
 [GIN-debug] GET    /api/users/:user_id       --> arczed/internal/handlers.(*userEndPoint).FindUsersByUserId-fm (7 handlers)
 [GIN-debug] GET    /api/users/usersAll       --> arczed/internal/handlers.(*userEndPoint).FindUserAll-fm (7 handlers)

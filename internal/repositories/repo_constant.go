@@ -14,7 +14,7 @@ import (
 )
 
 // เพิ่มข้อมูลค่าคงที่
-func (r *beseDB) Create(req *schemas.ConfigConstant) error {
+func (r *constDB) Create(req *schemas.ConfigConstant) error {
 	var data models.ConfigConstant
 	if err := copier.Copy(&data, req); err != nil {
 		return fmt.Errorf("failed to copy user data: %w", err)
@@ -37,33 +37,46 @@ func (r *beseDB) Create(req *schemas.ConfigConstant) error {
 }
 
 // นับ items ตามกลุ่ม
-func (r *beseDB) CountItemByGroup(group string) int64 {
-	numItem := Count(r.db.Unscoped().Scopes(WhereGroupId(group)), &models.ConfigConstant{})
+func (r *constDB) CountItemByGroup(group string) int64 {
+	numItem := Count(r.db.
+		Unscoped().
+		Scopes(
+			WhereGroupId(group),
+		), &models.ConfigConstant{})
 	return numItem
 }
 
 // อัพเดตค่าคงที่
-func (r *beseDB) Update(req *schemas.ConfigConstant) error {
+func (r *constDB) Update(req *schemas.ConfigConstant) error {
 	return Transaction(r.db, func(d *gorm.DB) error {
 		var data models.ConfigConstant
 		if err := copier.Copy(&data, req); err != nil {
 			return err
 		}
-		return Updates(r.db.Scopes(WhereConstId(data.ConstID), WhereGroupId(data.GroupID)), &data)
+		return Updates(r.db.
+			Scopes(
+				WhereConstId(data.ConstID),
+				WhereGroupId(data.GroupID),
+			), &data)
 	})
 }
 
 // ลบค่าคงที่
-func (r *beseDB) Delete(id, group string) error {
+func (r *constDB) Delete(id, group string) error {
 	return Transaction(r.db, func(d *gorm.DB) error {
 		var configConst models.ConfigConstant
 		configConst.IsActive = pkg.IntPointer(0)
-		return Delete(r.db.Scopes(WhereConstId(id), WhereGroupId(group)), &configConst)
+		return Delete(
+			r.db.
+				Scopes(
+					WhereConstId(id),
+					WhereGroupId(group),
+				), &configConst)
 	})
 }
 
 // query ค้นหาค่าคงที่
-func (r *beseDB) FindConst(req *schemas.ConfigConstant) *gorm.DB {
+func (r *constDB) FindConst(req *schemas.ConfigConstant) *gorm.DB {
 	return r.db.
 		Scopes(
 			WhereIsActive(req.IsActive),
@@ -73,7 +86,7 @@ func (r *beseDB) FindConst(req *schemas.ConfigConstant) *gorm.DB {
 }
 
 // ค้นหาแบบแบ่งหน้า
-func (r *beseDB) FindPage(req *schemas.ConfigConstant) (*Pagination[models.ConfigConstant], error) {
+func (r *constDB) FindPage(req *schemas.ConfigConstant) (*Pagination[models.ConfigConstant], error) {
 	constData := []models.ConfigConstant{}
 	pagination := &Pagination[models.ConfigConstant]{
 		Sort: "group_id,sort asc",
@@ -88,7 +101,7 @@ func (r *beseDB) FindPage(req *schemas.ConfigConstant) (*Pagination[models.Confi
 }
 
 // ค้นหาทั้งหมด
-func (r *beseDB) FindAll(req *schemas.ConfigConstant) ([]models.ConfigConstant, error) {
+func (r *constDB) FindAll(req *schemas.ConfigConstant) ([]models.ConfigConstant, error) {
 	constData := []models.ConfigConstant{}
 	if err := r.FindConst(req).Order("group_id,sort asc").Find(&constData).Error; err != nil {
 		return nil, err
@@ -97,16 +110,21 @@ func (r *beseDB) FindAll(req *schemas.ConfigConstant) ([]models.ConfigConstant, 
 }
 
 // หาค่า Max Sort ของค่าคงที่ตามกลุ่มสำหรับ running sort ของแต่ละกลุ่ม
-func (r *beseDB) MaxSortByGroup(group string) int64 {
+func (r *constDB) MaxSortByGroup(group string) int64 {
 	var maxSort int64
-	err := r.db.Model(&models.ConfigConstant{}).Unscoped().Select("MAX(sort)").Scopes(WhereGroupId(group)).Scan(&maxSort).Error
+	err := r.db.Model(&models.ConfigConstant{}).
+		Unscoped().
+		Select("MAX(sort)").
+		Scopes(
+			WhereGroupId(group),
+		).
+		Scan(&maxSort).Error
 	if err != nil {
 		log.Println("Get Max Sort Error :", err.Error())
 		return 0
 	}
-	// query := r.db.Unscoped().Select("MAX(sort)").Scopes(WhereGroupId(group))
-	// maxSort := Count(query, &models.ConfigConstant{})
-
+	//query := r.db.Unscoped().Select("MAX(sort)").Scopes(WhereGroupId(group))
+	//maxSort := Count(query, &models.ConfigConstant{})
 	maxSort = maxSort + 1
 	return maxSort
 }

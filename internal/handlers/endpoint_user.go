@@ -116,7 +116,21 @@ func (en *userEndPoint) DeleteUsers(c *gin.Context) {
 // @Success 200 {object} schemas.LoginResp
 // @Failure 400 {object} schemas.HTTPError
 // @Router /api/login [post]
-// @Security ApiKeyAuth
 func (en *userEndPoint) Login(c *gin.Context) {
 	rander.RespJson(c, en.service.Login, &schemas.LoginReq{})
+}
+
+// @Tags Auth
+// @Summary ขอ Token เข้าใช้งานระบบใหม่
+// @Description Refresh เพื่อขอ Token เข้าใช้งานระบบใหม่
+// @Accept  json
+// @Produce  json
+// @Param Accept-Language header string false "(en, th)" default(th)
+// @Param request body schemas.RefreshTokenReq false " request body "
+// @Success 200 {object} schemas.LoginResp
+// @Failure 400 {object} schemas.HTTPError
+// @Router /api/refreshToken [post]
+// @Security ApiKeyAuth
+func (en *userEndPoint) RefreshToken(c *gin.Context) {
+	rander.RespJson(c, en.service.RefreshToken, &schemas.RefreshTokenReq{})
 }

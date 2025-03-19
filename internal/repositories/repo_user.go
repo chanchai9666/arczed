@@ -24,34 +24,25 @@ func (r *userDB) CreateUsers(req *schemas.AddUsers) error {
 }
 func (r *userDB) FindUsers(req *schemas.FindUsersReq) ([]models.Users, error) {
 
-	var allusers []models.Users
+	var allUsers []models.Users
 	tx := r.db
-	if req.Email != "" {
-		tx = tx.Where("email=?", req.Email)
-	}
-	if req.Name != "" {
-		tx = tx.Where("name LIKE ?", "%"+req.Name+"%")
-	}
-	if req.SurName != "" {
-		tx = tx.Where("sur_name=?", "%"+req.SurName+"%")
-	}
-	if req.UserId != "" {
-		tx = tx.Where("user_id=?", req.UserId)
-	}
 
 	pagination := &Pagination[models.Users]{
 		Sort: "email asc",
 	}
 	err := tx.Preload("Level").Scopes(
 		WhereIsActive(),
+		WhereName(req.Name),
+		WhereSurName(req.SurName),
+		WhereEmail(req.Email),
+		WhereUserId(req.UserId),
 		Paginate(r.db, models.Users{}, pagination),
-	).Find(&allusers).Error
+	).Find(&allUsers).Error
 	if err != nil {
 		return nil, err
 	}
-	pagination.Rows = allusers
-	// aider.DD(allusers)
-	return allusers, nil
+	pagination.Rows = allUsers
+	return allUsers, nil
 }
 func (r *userDB) UpdateUser(req *schemas.AddUsers) error {
 	var users models.Users

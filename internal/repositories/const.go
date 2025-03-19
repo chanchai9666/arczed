@@ -9,19 +9,25 @@ import (
 	"arczed/configs"
 )
 
-type baseRequest struct {
+type constRequest struct {
 	db *gorm.DB
 }
 
-type beseDB struct {
-	*baseRequest
+type mainDB struct {
+	*constRequest
+	userId string
+	config *configs.Config
+}
+
+type constDB struct {
+	*constRequest
 	userId string
 	config *configs.Config
 }
 
 // กำหนดให้ใหม่ให้ repo ของ user ใหม่เนื่องจากมีการรับค่า string ที่จำเป็นต้องใช้งาน
 type userDB struct {
-	*baseRequest
+	*constRequest
 	userId string
 	config *configs.Config
 }

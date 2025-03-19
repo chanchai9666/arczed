@@ -171,7 +171,7 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "สถานะใช้งาน",
                         "name": "is_active",
                         "in": "query"
@@ -268,7 +268,7 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "สถานะใช้งาน",
                         "name": "is_active",
                         "in": "query"
@@ -314,7 +314,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/arczed_internal_entities_schemas.Pagination-arczed_internal_entities_models_ConfigConstant"
+                            "$ref": "#/definitions/arczed_internal_entities_schemas.ConfigConstantResp"
                         }
                     },
                     "400": {
@@ -379,11 +379,6 @@ const docTemplate = `{
         },
         "/api/login": {
             "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
                 "description": "Login เข้าใช้งานสำหรับขอ token",
                 "consumes": [
                     "application/json"
@@ -409,6 +404,57 @@ const docTemplate = `{
                         "in": "body",
                         "schema": {
                             "$ref": "#/definitions/arczed_internal_entities_schemas.LoginReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/arczed_internal_entities_schemas.LoginResp"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/arczed_internal_entities_schemas.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/refreshToken": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Refresh เพื่อขอ Token เข้าใช้งานระบบใหม่",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "ขอ Token เข้าใช้งานระบบใหม่",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "th",
+                        "description": "(en, th)",
+                        "name": "Accept-Language",
+                        "in": "header"
+                    },
+                    {
+                        "description": " request body ",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/arczed_internal_entities_schemas.RefreshTokenReq"
                         }
                     }
                 ],
@@ -934,7 +980,7 @@ const docTemplate = `{
                 },
                 "is_active": {
                     "description": "สถานะใช้งาน",
-                    "type": "integer"
+                    "type": "string"
                 },
                 "name_en": {
                     "description": "ชื่อค่าคงที่ EN",
@@ -959,6 +1005,79 @@ const docTemplate = `{
                 "sort": {
                     "description": "ลำดับ",
                     "type": "integer"
+                }
+            }
+        },
+        "arczed_internal_entities_schemas.ConfigConstantResp": {
+            "type": "object",
+            "properties": {
+                "const_id": {
+                    "description": "ไอดีค่าคงที่",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "วันที่สร้าง",
+                    "type": "string"
+                },
+                "created_user": {
+                    "description": "ผู้สร้าง",
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "description": "วันเวลาที่ลบ",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/gorm.DeletedAt"
+                        }
+                    ]
+                },
+                "deleted_user": {
+                    "description": "ผุ้ลบ",
+                    "type": "string"
+                },
+                "group_id": {
+                    "description": "ไอดีกลุ่มค่าคงที่",
+                    "type": "string"
+                },
+                "is_active": {
+                    "description": "สถานะใช้งาน",
+                    "type": "integer"
+                },
+                "is_active_txt": {
+                    "description": "สถานะใช้งาน",
+                    "type": "string"
+                },
+                "name_en": {
+                    "description": "ชื่อค่าคงที่ EN",
+                    "type": "string"
+                },
+                "name_th": {
+                    "description": "ชื่อค่าคงที่ TH",
+                    "type": "string"
+                },
+                "ref_value1": {
+                    "description": "ค่าอ้างอิง 1",
+                    "type": "string"
+                },
+                "ref_value2": {
+                    "description": "ค่าอ้างอิง 2",
+                    "type": "string"
+                },
+                "ref_value3": {
+                    "description": "ค่าอ้างอิง 3",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "ลำดับ",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "description": "วันเวลาที่อัพเดทล่าสุด",
+                    "type": "string"
+                },
+                "updated_user": {
+                    "description": "ผู้อัพเดทล่าสุด",
+                    "type": "string"
                 }
             }
         },
@@ -1032,6 +1151,23 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "total_rows": {
+                    "type": "integer"
+                }
+            }
+        },
+        "arczed_internal_entities_schemas.RefreshTokenReq": {
+            "type": "object",
+            "required": [
+                "email",
+                "user_id"
+            ],
+            "properties": {
+                "email": {
+                    "description": "อีเมล",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "ผู้ใช้งาน",
                     "type": "integer"
                 }
             }

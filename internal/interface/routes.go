@@ -44,7 +44,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Use(cors.New(cors.Config{
 		AllowAllOrigins: true, // อนุญาตให้ทุกโดเมนเข้าถึง
 		AllowMethods:    []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:    []string{"Origin", "Content-Type", "Accept"},
+		AllowHeaders:    []string{"Origin", "Content-Type", "Accept", "Authorization", "Custom-Header"},
 	}))
 
 	db := s.db.MainConnect()
@@ -68,6 +68,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	f, _ := os.Create("gin.log")
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 
+	jwtAuth := middleware.AuthMiddleware(s.config.JwtSECRETKEY)
+
 	r.GET("/", s.HelloWorldHandler)
 	r.GET("/docs/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
@@ -77,31 +79,30 @@ func (s *Server) RegisterRoutes() http.Handler {
 	userService := usecase.NewUserService(userRep)
 	userEndPoint := handlers.NewUserEndPoint(userService)
 	api.POST("/login", userEndPoint.Login)
+	api.POST("/refreshToken", jwtAuth, userEndPoint.RefreshToken)
+
+	us := api.Group("/users")
+	us.Use(jwtAuth)
 	{
-		us := api.Group("/users")
-		us.Use(middleware.AuthMiddleware(s.config.JwtSECRETKEY))
-		{
-			us.GET("/", userEndPoint.FindUser)
-			us.GET("/:user_id", userEndPoint.FindUsersByUserId)
-			us.GET("/usersAll", userEndPoint.FindUserAll)
-			us.POST("/createUsers", userEndPoint.CreateUsers)
-			us.POST("/updateUsers", userEndPoint.UpdateUsers)
-			us.DELETE("/deleteUsers/:user_id", userEndPoint.DeleteUsers)
-		}
+		us.GET("/", userEndPoint.FindUser)
+		us.GET("/:user_id", userEndPoint.FindUsersByUserId)
+		us.GET("/usersAll", userEndPoint.FindUserAll)
+		us.POST("/createUsers", userEndPoint.CreateUsers)
+		us.POST("/updateUsers", userEndPoint.UpdateUsers)
+		us.DELETE("/deleteUsers/:user_id", userEndPoint.DeleteUsers)
+	}
 
-		ct := api.Group("/const")
-		ct.Use(middleware.AuthMiddleware(s.config.JwtSECRETKEY))
-		constRepo := repositories.NewConstRepository(db, &s.config, "admin")
-		constService := usecase.NewConstRepository(constRepo)
-		constEndPoint := handlers.NewConstEndpoint(constService)
-		{
-			ct.GET("/findConstAll", constEndPoint.FindConstAll)
-			ct.GET("/findConst", constEndPoint.FindConst)
-			ct.POST("/createConst", constEndPoint.CreateConst)
-			ct.POST("/updateConst", constEndPoint.UpdateConst)
-			ct.DELETE("/deleteConst/:group_id/:const_id", constEndPoint.DeleteConst)
-
-		}
+	ct := api.Group("/const")
+	ct.Use(jwtAuth)
+	constRepo := repositories.NewConstRepository(db, &s.config, "admin")
+	constService := usecase.NewConstRepository(constRepo)
+	constEndPoint := handlers.NewConstEndpoint(constService)
+	{
+		ct.GET("/findConstAll", constEndPoint.FindConstAll)
+		ct.GET("/findConst", constEndPoint.FindConst)
+		ct.POST("/createConst", constEndPoint.CreateConst)
+		ct.POST("/updateConst", constEndPoint.UpdateConst)
+		ct.DELETE("/deleteConst/:group_id/:const_id", constEndPoint.DeleteConst)
 
 	}
 
@@ -118,7 +119,7 @@ func (s *Server) HelloWorldHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// HealthCheckHandler godoc
+// HealthCheckHandler
 // @summary Health Check
 // @description Health checking for the service
 // @id HealthCheckHandler

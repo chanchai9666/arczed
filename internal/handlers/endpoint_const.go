@@ -70,7 +70,7 @@ func (en *constEndPoint) DeleteConst(c *gin.Context) {
 // @Produce  json
 // @Param Accept-Language header string false "(en, th)" default(th)
 // @Param request query schemas.ConfigConstant false " request body "
-// @Success 200 {object} schemas.Pagination[models.ConfigConstant]
+// @Success 200 {object} schemas.ConfigConstantResp
 // @Failure 400 {object} schemas.HTTPError
 // @Router /api/const/findConstAll [get]
 // @Security ApiKeyAuth
