@@ -8,10 +8,6 @@ import (
 	"arczed/internal/entities/schemas"
 )
 
-type ProductRepository interface {
-	AddProduct(req *schemas.ProductReq) error
-}
-
 func NewConstRepository(db *gorm.DB, config *configs.Config, userId string) ConstRepository {
 	return &constDB{
 		constRequest: &constRequest{db: db},
@@ -20,17 +16,17 @@ func NewConstRepository(db *gorm.DB, config *configs.Config, userId string) Cons
 	}
 }
 
-func NewProductRepository(db *gorm.DB) ProductRepository {
-	return &constDB{
-		constRequest: &constRequest{db: db},
-	}
-}
-
 func NewUsersRepository(db *gorm.DB, config *configs.Config, userId string) UsersRepository {
 	return &userDB{
 		constRequest: &constRequest{db: db}, // ใช้ชื่อฟิลด์เพื่อกำหนดค่า
 		userId:       userId,                // กำหนดค่าให้กับ Name
 		config:       config,
+	}
+}
+
+func NewProductRepository(db *gorm.DB) ProductRepository {
+	return &constDB{
+		constRequest: &constRequest{db: db},
 	}
 }
 
@@ -48,4 +44,8 @@ type ConstRepository interface {
 	Delete(id, group string) error                                                    //ลบค่าคงที่
 	FindPage(req *schemas.ConfigConstant) (*Pagination[models.ConfigConstant], error) //ค้าหาค่าคงที่แบบแบ่งหน้า
 	FindAll(req *schemas.ConfigConstant) ([]models.ConfigConstant, error)             //ค้นหาค่าคงที่ทั้งหมด
+}
+
+type ProductRepository interface {
+	AddProduct(req *schemas.ProductReq) error
 }

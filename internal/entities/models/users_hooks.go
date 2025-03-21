@@ -8,8 +8,8 @@ import (
 )
 
 func (u *Users) BeforeCreate(tx *gorm.DB) (err error) {
-	// เรียก BeforeCreate ของ BaseColumn
-	if err := u.BaseColumn.BeforeCreate(tx); err != nil {
+	// เรียก BeforeCreate ของ AuditLog
+	if err := u.AuditLog.BeforeCreate(tx); err != nil {
 		return err
 	}
 

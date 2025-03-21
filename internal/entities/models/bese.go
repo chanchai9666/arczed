@@ -8,7 +8,7 @@ import (
 )
 
 // type DeletedAt sql.NullTime
-type BaseColumn struct {
+type AuditLog struct {
 	IsActive    *int            `json:"is_active" gorm:"type:int2;default:1;comment:สถานะใช้งาน;"`                 //สถานะใช้งาน
 	CreatedAt   *time.Time      `json:"created_at,omitempty" gorm:"type:timestamp;comment:วันที่สร้าง"`            //วันที่สร้าง
 	CreatedUser string          `json:"created_user,omitempty" gorm:"type:varchar(50);comment:ผู้สร้าง"`           //ผู้สร้าง
@@ -20,7 +20,7 @@ type BaseColumn struct {
 
 // ใช้ GORM Hooks (BeforeCreate) กรณีที่ไม่ได้กำหนดค่าส่งมา จะ default value ตามที่กำหนดไว้ก่อนนำไป insert
 // กรณี struct มี Hooks เป็นของตัวเอง Hooks ที่เป็นของ embedded struct จะไม่ถูกเรียกใช้งาน ถ้าต้องการเรียกใช้งานต้องเรียกเอง
-func (u *BaseColumn) BeforeCreate(tx *gorm.DB) (err error) {
+func (u *AuditLog) BeforeCreate(tx *gorm.DB) (err error) {
 	if u.IsActive == nil {
 		isActive := 1
 		u.IsActive = &isActive
@@ -38,7 +38,7 @@ func (u *BaseColumn) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 // ใช้ GORM Hooks (BeforeCreate) กรณีที่ไม่ได้กำหนดค่าส่งมา จะ default value ตามที่กำหนดไว้ก่อนนำไป Update
-func (u *BaseColumn) BeforeUpdate(tx *gorm.DB) (err error) {
+func (u *AuditLog) BeforeUpdate(tx *gorm.DB) (err error) {
 	if u.UpdatedAt == nil {
 		timeNow := aider.TimeTimeNow()
 		u.UpdatedAt = &timeNow
@@ -47,7 +47,7 @@ func (u *BaseColumn) BeforeUpdate(tx *gorm.DB) (err error) {
 	return nil
 }
 
-func (u *BaseColumn) BeforeDelete(tx *gorm.DB) (err error) {
+func (u *AuditLog) BeforeDelete(tx *gorm.DB) (err error) {
 	if u.IsActive == nil {
 		isActive := 0
 		u.IsActive = &isActive
@@ -64,7 +64,7 @@ func (u *BaseColumn) BeforeDelete(tx *gorm.DB) (err error) {
 }
 
 // // AfterFind Hook ที่จะถูกเรียกหลังจากที่ GORM ทำการค้นหาเสร็จ
-// func (bc *BaseColumn) AfterFind(tx *gorm.DB) (err error) {
+// func (bc *AuditLog) AfterFind(tx *gorm.DB) (err error) {
 
 // 	// ตรวจสอบว่าฟิลด์ CreatedAt, UpdatedAt, DeletedAt ไม่เป็น nil
 // 	if bc.CreatedAt != nil {

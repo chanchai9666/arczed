@@ -1,7 +1,7 @@
 package models
 
 type ConfigConstant struct {
-	BaseColumn
+	AuditLog
 	ConstID   string `json:"const_id" gorm:"type:varchar(50);primaryKey;comment:ไอดีค่าคงที่;"`
 	GroupID   string `json:"group_id" gorm:"type:varchar(50);primaryKey;index;comment:ไอดีกลุ่มค่าคงที่;"`
 	NameTH    string `json:"name_th" gorm:"type:varchar(100);comment:ชื่อค่าคงที่ TH;"`

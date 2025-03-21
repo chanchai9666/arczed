@@ -2,7 +2,7 @@ package models
 
 // ข้อมูล User
 type Users struct {
-	BaseColumn
+	AuditLog
 	UserId      uint64        `json:"user_id" gorm:"primaryKey;autoIncrement"`                      //ไอดี ของผู้ใช้งาน
 	Email       string        `json:"email" gorm:"type:varchar(100);unique;comment:อีเมล"`          //อีเมล
 	Password    string        `json:"password" gorm:"type:varchar(255);comment:รหัสผ่าน"`           //ชื่อ โปรไฟล์
@@ -14,7 +14,7 @@ type Users struct {
 }
 
 type UsersLevels struct {
-	BaseColumn
+	AuditLog
 	ID     uint   `gorm:"column:id;type:int;primaryKey;autoIncrement"`
 	UserID uint64 `gorm:"column:user_id;index;type:varchar(50);not null"` // ต้องกำหนดประเภทและขนาดให้ตรงกับ Users.UserId
 	Level  string `gorm:"column:level;type:varchar(50);not null"`

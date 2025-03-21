@@ -15,7 +15,7 @@ type ConfigConstant struct {
 }
 
 type ConfigConstantResp struct {
-	models.BaseColumn
+	models.AuditLog
 	ConstId     string `json:"const_id"`                //ไอดีค่าคงที่
 	GroupId     string `json:"group_id"`                //ไอดีกลุ่มค่าคงที่
 	NameTH      string `json:"name_th"`                 //ชื่อค่าคงที่ TH

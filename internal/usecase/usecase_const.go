@@ -66,7 +66,7 @@ func (s *ConstRepository) FindAll(req *schemas.ConfigConstant) ([]schemas.Config
 		return nil, err
 	}
 	for i, v := range constData {
-		if v.BaseColumn.IsActive != nil && *v.BaseColumn.IsActive == 1 {
+		if v.AuditLog.IsActive != nil && *v.AuditLog.IsActive == 1 {
 			constData[i].IsActiveTxt = "ใช้งาน"
 		} else {
 			constData[i].IsActiveTxt = "ไม่ใช้งาน"
